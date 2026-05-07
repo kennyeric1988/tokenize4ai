@@ -1,0 +1,66 @@
+{
+  "candidate_services": [],
+  "data_flows": [],
+  "entrypoints": [],
+  "exits": [],
+  "generated_at": "2026-05-07T02:22:11.080027+00:00",
+  "repo_profile": {
+    "ci_files": [
+      ".github/workflows/privacy-compliance.yml"
+    ],
+    "deployment_files": [],
+    "docs": [
+      "README.md"
+    ],
+    "language_counts": {},
+    "manifests": [],
+    "owner_files": [],
+    "primary_language": "unknown",
+    "repo_name": "keeta-tokenize-4-all",
+    "root": "/Users/xuchuan/dev/ai-sdlc/keeta-tokenize-4-all"
+  },
+  "risk_summary": {
+    "blocking_unknown_count": 2,
+    "candidate_data_flow_count": 0,
+    "exit_count": 0,
+    "exits_by_type": {},
+    "high_risk_candidate_flow_count": 0,
+    "sensitive_field_count": 0,
+    "sensitive_fields_by_category": {}
+  },
+  "scanner": {
+    "excluded_path_patterns": [
+      "(^|/)docs/ai-sdlc/",
+      "(^|/)tools/privacy-"
+    ],
+    "name": "repo_inventory_scanner",
+    "strategy": "repo_profile_service_entry_storage_exit_sensitive_field_light_flow"
+  },
+  "schema_version": 1,
+  "sensitive_fields": [],
+  "storage": [
+    {
+      "category": null,
+      "confidence": "medium",
+      "excerpt": "- name: Build repository inventory scan",
+      "file": ".github/workflows/privacy-compliance.yml",
+      "id": "4e259b8304c3f62b",
+      "kind": "storage",
+      "line": 14,
+      "name": "relational_db",
+      "risk": "high"
+    }
+  ],
+  "unknowns": [
+    {
+      "blocking": true,
+      "reason": "No CODEOWNERS file was found. Service ownership needs confirmation.",
+      "type": "owner_unknown"
+    },
+    {
+      "blocking": true,
+      "reason": "No clear deployable service or runtime entry was detected.",
+      "type": "service_boundary_unknown"
+    }
+  ]
+}

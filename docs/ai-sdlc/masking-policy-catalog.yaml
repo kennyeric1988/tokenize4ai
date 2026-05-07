@@ -1,0 +1,102 @@
+# Approved masking policies.
+# Policy IDs are referenced by scanner findings, remediation tasks, and evidence bundles.
+version: 1
+last_reviewed: 2026-05-06
+policies:
+  - id: redact
+    name: Full Redaction
+    description: Replace the full value with a fixed placeholder.
+    placeholder: "[REDACTED]"
+    allowed_for:
+      - direct_identifier
+      - credential_secret
+      - free_text
+    evidence_required:
+      - before_after_example
+      - unit_or_contract_test
+      - reviewer_approval_for_production_fields
+
+  - id: partial_mask
+    name: Partial Masking
+    description: Preserve only a minimal suffix, prefix, or domain required for operations.
+    examples:
+      email: "a***@example.com"
+      phone: "******1234"
+      ip_address: "192.168.*.*"
+    allowed_for:
+      - contact
+      - location_device
+    evidence_required:
+      - utility_justification
+      - unit_or_contract_test
+
+  - id: tokenize_or_hash
+    name: Tokenization Or One-Way Hash
+    description: Replace the raw value with a deterministic token or hash for joins and debugging.
+    requirements:
+      - Use a managed tokenization service when available.
+      - If hashing is used, require a keyed hash for values from small domains.
+      - Never expose raw source values in logs, traces, snapshots, or evidence.
+    allowed_for:
+      - direct_identifier
+      - financial
+      - location_device
+    evidence_required:
+      - algorithm_or_service_reference
+      - test_showing_raw_value_absent
+      - access_control_review
+
+  - id: access_controlled_reveal
+    name: Access-Controlled Reveal
+    description: Allow raw value access only in approved workflows with authentication, authorization, audit logging, and expiry.
+    requirements:
+      - Record actor, reason, ticket, timestamp, and field category.
+      - Default UI state must be masked.
+      - Exceptions must expire and be reapproved.
+    allowed_for:
+      - direct_identifier
+      - contact
+      - financial
+    evidence_required:
+      - access_control_test
+      - audit_log_test
+      - exception_record
+
+  - id: no_store_no_log
+    name: No Store Or No Log
+    description: Prevent persistence or log emission for values where masking is insufficient.
+    allowed_for:
+      - credential_secret
+      - free_text
+    evidence_required:
+      - log_scan_test
+      - retention_or_drop_proof
+      - reviewer_approval
+
+  - id: detect_and_redact
+    name: Detect And Redact
+    description: Detect sensitive substrings in free text and redact matches before display, logging, or export.
+    allowed_for:
+      - free_text
+    evidence_required:
+      - detector_test_cases
+      - false_positive_review
+      - fallback_behavior
+
+  - id: aggregate_or_minimize
+    name: Aggregate Or Minimize
+    description: Reduce behavioral or analytics data to the minimum granularity needed.
+    allowed_for:
+      - behavioral_trace
+    evidence_required:
+      - purpose_limitation_note
+      - aggregation_test
+      - downstream_consumer_review
+
+default_decision_order:
+  - no_store_no_log
+  - redact
+  - tokenize_or_hash
+  - partial_mask
+  - aggregate_or_minimize
+  - access_controlled_reveal

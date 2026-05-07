@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/privacy-evidence-bundle.schema.json",
+  "title": "Sensitive Data Masking Evidence Bundle",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "summary", "systems", "findings"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["system_count", "finding_count", "open_finding_count", "critical_or_high_count"],
+      "additionalProperties": false,
+      "properties": {
+        "system_count": {
+          "type": "integer"
+        },
+        "finding_count": {
+          "type": "integer"
+        },
+        "open_finding_count": {
+          "type": "integer"
+        },
+        "critical_or_high_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "systems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "owner", "repositories"],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "object"
+          },
+          "repositories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding_evidence"
+      }
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/approval"
+      },
+      "default": []
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/exception"
+      },
+      "default": []
+    }
+  },
+  "$defs": {
+    "finding_evidence": {
+      "type": "object",
+      "required": [
+        "finding_id",
+        "source",
+        "classification",
+        "remediation",
+        "verification",
+        "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "finding_id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object",
+          "required": ["file", "line", "rule_id", "code_excerpt"],
+          "additionalProperties": true,
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "line": {
+              "type": "integer"
+            },
+            "rule_id": {
+              "type": "string"
+            },
+            "code_excerpt": {
+              "type": "string"
+            }
+          }
+        },
+        "classification": {
+          "type": "object",
+          "required": ["category", "policy", "severity", "confidence", "exposure"],
+          "additionalProperties": false,
+          "properties": {
+            "category": {
+              "type": "string"
+            },
+            "policy": {
+              "type": "string"
+            },
+            "severity": {
+              "type": "string"
+            },
+            "confidence": {
+              "type": "string"
+            },
+            "exposure": {
+              "type": "string"
+            },
+            "llm_rationale": {
+              "type": "string"
+            }
+          }
+        },
+        "remediation": {
+          "type": "object",
+          "required": ["required", "playbook", "diff_refs"],
+          "additionalProperties": false,
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "playbook": {
+              "type": "string"
+            },
+            "diff_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "notes": {
+              "type": "string"
+            }
+          }
+        },
+        "verification": {
+          "type": "object",
+          "required": ["tests", "scanner_result"],
+          "additionalProperties": false,
+          "properties": {
+            "tests": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "scanner_result": {
+              "type": "string",
+              "enum": ["pending", "passed", "failed", "not_applicable"]
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["open", "remediated", "false_positive", "exception", "accepted_risk"]
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "required": ["approver", "role", "approved_at", "scope"],
+      "additionalProperties": false,
+      "properties": {
+        "approver": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "exception": {
+      "type": "object",
+      "required": ["id", "finding_id", "owner", "reason", "expires_at", "compensating_controls"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "finding_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "compensating_controls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

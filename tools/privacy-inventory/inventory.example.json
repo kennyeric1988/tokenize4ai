@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "generated_at": "2026-05-06T00:00:00Z",
+  "systems": [
+    {
+      "id": "example-user-api",
+      "name": "Example User API",
+      "owner": {
+        "team": "example-department",
+        "primary_contact": "service-owner@example.com",
+        "slack_channel": "#example-user-api",
+        "approval_group": "example-privacy-approvers"
+      },
+      "repositories": [
+        "git@example.com:department/example-user-api.git"
+      ],
+      "runtime": {
+        "type": "api",
+        "language": "typescript",
+        "framework": "express",
+        "deployment": "kubernetes"
+      },
+      "data_stores": [
+        {
+          "name": "user-profile-db",
+          "type": "postgres",
+          "contains_sensitive_data": true,
+          "retention": "business-defined"
+        }
+      ],
+      "interfaces": [
+        {
+          "name": "GET /users/{id}",
+          "type": "rest",
+          "exposure": "internal",
+          "contract_location": "openapi.yaml"
+        }
+      ],
+      "observability": {
+        "log_sinks": [
+          "application-logs"
+        ],
+        "trace_sinks": [
+          "distributed-tracing"
+        ],
+        "dashboards": [
+          "user-api-dashboard"
+        ]
+      },
+      "data_flows": [
+        {
+          "name": "profile-read-response",
+          "source": "user-profile-db",
+          "destination": "GET /users/{id}",
+          "categories": [
+            "direct_identifier",
+            "contact"
+          ],
+          "masking_policy": "partial_mask",
+          "status": "unknown"
+        }
+      ],
+      "known_sensitive_fields": [
+        {
+          "name": "email",
+          "category": "contact",
+          "masking_policy": "partial_mask",
+          "location": "UserProfile.email",
+          "confidence": "high"
+        }
+      ],
+      "exceptions": []
+    }
+  ]
+}

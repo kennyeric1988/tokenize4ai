@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/privacy-inventory.schema.json",
+  "title": "Department-Owned System Privacy Inventory",
+  "type": "object",
+  "required": ["version", "systems"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "systems": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/system"
+      }
+    }
+  },
+  "$defs": {
+    "system": {
+      "type": "object",
+      "required": ["id", "name", "owner", "repositories", "runtime", "data_flows"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-_]*$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "$ref": "#/$defs/owner"
+        },
+        "repositories": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime": {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": true,
+          "properties": {
+            "type": {
+              "type": "string",
+              "examples": ["api", "worker", "batch", "admin", "pipeline"]
+            },
+            "language": {
+              "type": "string"
+            },
+            "framework": {
+              "type": "string"
+            },
+            "deployment": {
+              "type": "string"
+            }
+          }
+        },
+        "data_stores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/data_store"
+          },
+          "default": []
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/interface"
+          },
+          "default": []
+        },
+        "observability": {
+          "$ref": "#/$defs/observability"
+        },
+        "data_flows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/data_flow"
+          }
+        },
+        "known_sensitive_fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sensitive_field"
+          },
+          "default": []
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/exception"
+          },
+          "default": []
+        }
+      }
+    },
+    "owner": {
+      "type": "object",
+      "required": ["team", "primary_contact"],
+      "additionalProperties": false,
+      "properties": {
+        "team": {
+          "type": "string"
+        },
+        "primary_contact": {
+          "type": "string"
+        },
+        "slack_channel": {
+          "type": "string"
+        },
+        "approval_group": {
+          "type": "string"
+        }
+      }
+    },
+    "data_store": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "examples": ["mysql", "postgres", "redis", "s3", "warehouse", "search"]
+        },
+        "contains_sensitive_data": {
+          "type": "boolean",
+          "default": false
+        },
+        "retention": {
+          "type": "string"
+        }
+      }
+    },
+    "interface": {
+      "type": "object",
+      "required": ["name", "type", "exposure"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "examples": ["rest", "grpc", "event", "file_export", "dashboard"]
+        },
+        "exposure": {
+          "type": "string",
+          "enum": ["external", "internal", "restricted"]
+        },
+        "contract_location": {
+          "type": "string"
+        }
+      }
+    },
+    "observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "log_sinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "trace_sinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "dashboards": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "data_flow": {
+      "type": "object",
+      "required": ["name", "source", "destination", "categories", "masking_policy"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "destination": {
+          "type": "string"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "masking_policy": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["unknown", "compliant", "needs_remediation", "exception"],
+          "default": "unknown"
+        }
+      }
+    },
+    "sensitive_field": {
+      "type": "object",
+      "required": ["name", "category", "masking_policy", "location"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "masking_policy": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "default": "medium"
+        }
+      }
+    },
+    "exception": {
+      "type": "object",
+      "required": ["id", "reason", "owner", "expires_at", "compensating_controls"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "compensating_controls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

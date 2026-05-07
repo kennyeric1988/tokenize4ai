@@ -1,0 +1,98 @@
+# Canonical sensitive data taxonomy for department-owned systems.
+# Keep IDs stable; tools and evidence bundles refer to these values.
+version: 1
+last_reviewed: 2026-05-06
+categories:
+  - id: direct_identifier
+    name: Direct Identifier
+    severity: critical
+    description: Values that directly identify a user or account.
+    examples:
+      - user_id
+      - account_id
+      - real_name
+      - national_id
+      - passport_number
+    default_policy: redact
+
+  - id: contact
+    name: Contact Information
+    severity: high
+    description: Data used to contact or locate a person.
+    examples:
+      - email
+      - phone
+      - address
+      - postal_code
+    default_policy: partial_mask
+
+  - id: credential_secret
+    name: Credential Or Secret
+    severity: critical
+    description: Authentication, authorization, or session material.
+    examples:
+      - password
+      - token
+      - api_key
+      - session_id
+      - otp
+    default_policy: no_store_no_log
+
+  - id: financial
+    name: Financial Or Account Data
+    severity: critical
+    description: Payment, banking, wallet, balance, or transaction identifiers.
+    examples:
+      - card_number
+      - bank_account
+      - wallet_address
+      - iban
+      - transaction_id
+    default_policy: tokenize_or_hash
+
+  - id: location_device
+    name: Location Or Device Data
+    severity: high
+    description: Data that can identify or track a person, device, or location.
+    examples:
+      - ip_address
+      - gps_latitude
+      - gps_longitude
+      - device_id
+      - imei
+      - advertising_id
+    default_policy: partial_mask
+
+  - id: behavioral_trace
+    name: Behavioral Trace
+    severity: medium
+    description: Activity history, preferences, risk signals, or inferred behavior.
+    examples:
+      - search_history
+      - login_history
+      - user_agent
+      - risk_score
+      - clickstream
+    default_policy: aggregate_or_minimize
+
+  - id: free_text
+    name: Free Text With Possible Sensitive Data
+    severity: high
+    description: User-entered or operator-entered text that may contain sensitive data.
+    examples:
+      - comment
+      - note
+      - message
+      - error_detail
+      - support_ticket
+    default_policy: detect_and_redact
+
+classification_rules:
+  confidence_levels:
+    high: Deterministic pattern, schema annotation, or exact field match.
+    medium: Semantic field match or contextual evidence.
+    low: Weak keyword match that requires review before remediation.
+  review_required:
+    - credential_secret
+    - financial
+    - free_text

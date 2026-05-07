@@ -1,0 +1,84 @@
+{
+  "approvals": [],
+  "exceptions": [],
+  "findings": [],
+  "generated_at": "2026-05-07T02:22:11.365801+00:00",
+  "schema_version": 1,
+  "summary": {
+    "critical_or_high_count": 0,
+    "finding_count": 0,
+    "open_finding_count": 0,
+    "system_count": 1
+  },
+  "systems": [
+    {
+      "data_flows": [
+        {
+          "categories": [
+            "direct_identifier",
+            "contact"
+          ],
+          "destination": "GET /users/{id}",
+          "masking_policy": "partial_mask",
+          "name": "profile-read-response",
+          "source": "user-profile-db",
+          "status": "unknown"
+        }
+      ],
+      "data_stores": [
+        {
+          "contains_sensitive_data": true,
+          "name": "user-profile-db",
+          "retention": "business-defined",
+          "type": "postgres"
+        }
+      ],
+      "exceptions": [],
+      "id": "example-user-api",
+      "interfaces": [
+        {
+          "contract_location": "openapi.yaml",
+          "exposure": "internal",
+          "name": "GET /users/{id}",
+          "type": "rest"
+        }
+      ],
+      "known_sensitive_fields": [
+        {
+          "category": "contact",
+          "confidence": "high",
+          "location": "UserProfile.email",
+          "masking_policy": "partial_mask",
+          "name": "email"
+        }
+      ],
+      "name": "Example User API",
+      "observability": {
+        "dashboards": [
+          "user-api-dashboard"
+        ],
+        "log_sinks": [
+          "application-logs"
+        ],
+        "trace_sinks": [
+          "distributed-tracing"
+        ]
+      },
+      "owner": {
+        "approval_group": "example-privacy-approvers",
+        "primary_contact": "service-owner@example.com",
+        "slack_channel": "#example-user-api",
+        "team": "example-department"
+      },
+      "repositories": [
+        "git@example.com:department/example-user-api.git"
+      ],
+      "runtime": {
+        "deployment": "kubernetes",
+        "framework": "express",
+        "language": "typescript",
+        "type": "api"
+      }
+    }
+  ]
+}

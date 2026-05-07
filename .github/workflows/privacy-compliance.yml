@@ -1,0 +1,45 @@
+name: Privacy Compliance
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  privacy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build repository inventory scan
+        run: |
+          python3 tools/privacy-inventory/repo_inventory_scanner.py \
+            --root . \
+            --output docs/ai-sdlc/evidence/repo-inventory-scan.json \
+            --pretty
+
+      - name: Run privacy scanner
+        run: |
+          python3 tools/privacy-scanner/privacy_scanner.py \
+            --root . \
+            --output docs/ai-sdlc/evidence/findings.json \
+            --fail-on none
+
+      - name: Run masking helper tests
+        run: python3 tools/privacy-remediation/test_masking.py
+
+      - name: Generate evidence bundle
+        run: |
+          python3 tools/privacy-evidence/generate_evidence.py \
+            --findings docs/ai-sdlc/evidence/findings.json \
+            --inventory tools/privacy-inventory/inventory.example.json \
+            --output docs/ai-sdlc/evidence/evidence-bundle.json
+
+      - name: Upload privacy evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: privacy-evidence
+          path: |
+            docs/ai-sdlc/evidence/repo-inventory-scan.json
+            docs/ai-sdlc/evidence/findings.json
+            docs/ai-sdlc/evidence/evidence-bundle.json

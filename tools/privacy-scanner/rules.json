@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "credential-secret-keyword",
+      "category": "credential_secret",
+      "policy": "no_store_no_log",
+      "severity": "critical",
+      "confidence": "high",
+      "pattern": "(?i)\\b(password|passwd|pwd|secret|api[_-]?key|access[_-]?token|refresh[_-]?token|session[_-]?id|otp|mfa[_-]?code)\\b",
+      "description": "Credential or secret-like field name."
+    },
+    {
+      "id": "contact-keyword",
+      "category": "contact",
+      "policy": "partial_mask",
+      "severity": "high",
+      "confidence": "medium",
+      "pattern": "(?i)\\b(email|e-mail|phone|mobile|address|postal[_-]?code|zip[_-]?code)\\b",
+      "description": "Contact information field name."
+    },
+    {
+      "id": "direct-identifier-keyword",
+      "category": "direct_identifier",
+      "policy": "redact",
+      "severity": "critical",
+      "confidence": "medium",
+      "pattern": "(?i)\\b(real[_-]?name|full[_-]?name|first[_-]?name|last[_-]?name|national[_-]?id|passport|id[_-]?card|ssn|tax[_-]?id)\\b",
+      "description": "Direct user identifier field name."
+    },
+    {
+      "id": "financial-keyword",
+      "category": "financial",
+      "policy": "tokenize_or_hash",
+      "severity": "critical",
+      "confidence": "medium",
+      "pattern": "(?i)\\b(card[_-]?number|credit[_-]?card|bank[_-]?account|iban|wallet[_-]?address|routing[_-]?number|transaction[_-]?id)\\b",
+      "description": "Financial or account data field name."
+    },
+    {
+      "id": "location-device-keyword",
+      "category": "location_device",
+      "policy": "partial_mask",
+      "severity": "high",
+      "confidence": "medium",
+      "pattern": "(?i)\\b(ip[_-]?address|device[_-]?id|imei|imsi|advertising[_-]?id|gps|latitude|longitude|geo[_-]?hash)\\b",
+      "description": "Location or device identifier field name."
+    },
+    {
+      "id": "free-text-keyword",
+      "category": "free_text",
+      "policy": "detect_and_redact",
+      "severity": "high",
+      "confidence": "low",
+      "pattern": "(?i)\\b(comment|note|message|description|remark|error[_-]?detail|support[_-]?ticket)\\b",
+      "description": "Free-text field that may contain sensitive data."
+    },
+    {
+      "id": "unsafe-logging-context",
+      "category": "free_text",
+      "policy": "no_store_no_log",
+      "severity": "high",
+      "confidence": "medium",
+      "pattern": "(?i)\\b(log|logger|console\\.log|print|printf|trace|span\\.setAttribute)\\b.*\\b(email|phone|token|password|address|name|device|ip)\\b",
+      "description": "Potential sensitive value emitted to logs or traces."
+    },
+    {
+      "id": "api-response-context",
+      "category": "direct_identifier",
+      "policy": "redact",
+      "severity": "high",
+      "confidence": "low",
+      "pattern": "(?i)\\b(response|serialize|serializer|toJSON|jsonify|render|return)\\b.*\\b(email|phone|address|name|token|account|card)\\b",
+      "description": "Potential sensitive value returned through an API or rendered output."
+    }
+  ],
+  "path_hints": [
+    {
+      "pattern": "(?i)(controller|route|handler|api|serializer|dto|view|response)",
+      "exposure": "api_or_presentation"
+    },
+    {
+      "pattern": "(?i)(log|logger|trace|metric|dashboard|monitor)",
+      "exposure": "observability"
+    },
+    {
+      "pattern": "(?i)(model|entity|schema|migration|dao|repository|sql)",
+      "exposure": "storage"
+    },
+    {
+      "pattern": "(?i)(export|report|admin|backoffice|ops)",
+      "exposure": "admin_or_export"
+    },
+    {
+      "pattern": "(?i)(pipeline|job|worker|batch|etl|stream)",
+      "exposure": "data_pipeline"
+    }
+  ]
+}
