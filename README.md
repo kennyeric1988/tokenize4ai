@@ -8,6 +8,7 @@ The toolkit is intentionally lightweight and language-agnostic at the policy lay
 
 - `docs/ai-sdlc/sensitive-data-taxonomy.yaml`: canonical sensitive data categories.
 - `docs/ai-sdlc/masking-policy-catalog.yaml`: approved masking policies and evidence expectations.
+- `docs/ai-sdlc/ai-sdlc-overall-design.md`: detailed AI-SDLC design for department-wide masking compliance.
 - `docs/ai-sdlc/pii-masking-compliance-plan.md`: executable program guide.
 - `tools/privacy-inventory/`: inventory schema and example system record.
 - `tools/privacy-scanner/`: deterministic scanner prototype and rule catalog.
